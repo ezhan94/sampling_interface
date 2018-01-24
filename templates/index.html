@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='custom.css') }}">-->
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
+    <script src="https://use.fontawesome.com/111b0aa8fe.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:b" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='hover.css') }}">-->
+    <style>
+    .bottom-three {
+        margin-bottom: 3cm;
+    }
+    $(function() {
+      $('#designer-javascript-bold').change(function(e) {
+        var checked = $(this).prop('checked');
+        $(".ui-selected").each(function() {
+          $(this).css("font-weight", checked ? "bold" : "normal");
+        });
+      });
+    });
+</style>
+</head>
+<body>
+<div class = "container-fluid" style="margin-top:150px;">
+
+   <div class = "col-md-8" style="margin-top:30px;">
+
+        <div class="row text-right" >
+            <div class="row col-md-12" id="caption" style="font-size:30px; margin-left:-40px">
+            <br>
+            </div>
+            <div class="row col-md-12" style="margin-left:-10px;">
+                <div id="chart"></div>
+            </div>
+        </div>
+
+    </div>
+    <div class = "col-md-4 text-left" style="margin-top:30px;">
+        <div class="col-md-12 text-left" style = 'margin-top: 2cm; margin-bottom: 3cm'>
+            <button type="button" class="btn btn-primary" id="clickStart" style="width:200px; height:100px; font-size:25px;font-weight:bold;">Start<br>Locations</button>
+            <!--<label>-->
+                <!--<h2> Turn on to Click Start Locations</h2>-->
+                <!--<input type="checkbox" data-toggle="toggle" id="clickStart" >-->
+            <!--</label>-->
+        </div>
+        <div class="row"><br></div>
+
+        <div class="col-md-12 text-left" style = 'margin-top: 3cm;'>
+            <!--<label>-->
+                <!--<h2>Turn On to Click Marco Goals</h2>-->
+               <!--<input type="checkbox" data-toggle="toggle" id="clickMarco" >-->
+            <!--</label>-->
+            <button type="button" class="btn btn-primary" id="clickMacro" style="width:200px; height:100px; font-size:25px;font-weight:bold;">Macro<br>Goals</button>
+        </div>
+    </div>
+
+    <div class = "col-md-8 text-right" style="margin-top:30px;">
+        <div class = "col-md-4">
+        </div>
+        <div class = "col-md-2 text-right">
+             <button type="button" class="btn btn-success" id="simButton" data-loading-text="Simulating..." style="width: 200px; height: 70px; font-size:25px;font-weight:bold;">Simulate</button>
+        </div>
+        <div class = "col-md-2 text-right" style="font-size:25px;">
+            Macro<br>Goals
+        </div>
+        <div class = "col-md-2 text-left" style="margin-left:-10px">
+            <input type="checkbox" data-toggle="toggle" id="macroToggle" data-onstyle="success" data-width="100" data-height="70">
+
+        </div>
+        <div class = "col-md-2 text-left">
+             <button type="button" class="btn btn-success" id="replayButton" disabled="disabled" style="width: 200px; height: 70px; font-size:25px;font-weight:bold;">Replay</button>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="loginModal" data-keyboard="false" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-lg" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <!--<button type="button" class="close" data-dismiss="modal" style="border:red;color:red;background-color:red;font-weight:bold">&times;</button>-->
+                <h3 class="modal-title" style="color:#D32F2F;font-weight:bold">Log In</h3>
+            </div>
+            <div class="modal-body">
+                <br>
+                <div class="row text-center">
+                    <label style="font-size:30px"><b>Please Input Your Name</b></label>
+                </div>
+                <div class="row text-center">
+                    <input type="text" placeholder="Enter Name" id="userName" required style="font-size:30px">
+                </div>
+                <!--<div class="row text-center">-->
+                    <!--<label style="font-size:30px"><b>Password</b></label>-->
+                <!--</div>-->
+                <!--<div class="row text-center">-->
+                    <!--<input type="password" placeholder="Enter Password" id="password" required style="font-size:30px">-->
+                <!--</div>-->
+                <br>
+                <div class="row text-center">
+                    <button type="submit" class="btn btn-lg btn-primary" id="loginButton" style="width:100px;height:50px;font-size:20px;background-color:#616161;border:#616161" >Submit</button>
+                </div>
+                <div class="row text-center">
+                    <div id = "alert_placeholder"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+</html>
