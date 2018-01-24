@@ -24,7 +24,7 @@ The button will switch between Macro Goals and Remove Macros, click Remove Macro
  remove the existing macro goals that you have input.
 
 2.4 Click Simulate button (green) to visualize the sampling trajectories. If no macro goals
-are provided, it will use the default value.
+are provided, it will use the default value. Trajectories are animated at 7fps.
 
 2.5 Macro Goals toggle button is used to turn on or turn off the visualization of macro goals.
 
