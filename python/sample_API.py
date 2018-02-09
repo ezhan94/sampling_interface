@@ -1,10 +1,10 @@
 import numpy as np
 import pickle
-import bball_data.cfg as cfg
+import python.bball_data.cfg as cfg
 
 
-from model import *
-from bball_data.utils import normalize, unnormalize, plot_animation, plot_macrogoals
+from python.model import *
+from python.bball_data.utils import normalize, unnormalize, plot_animation, plot_macrogoals
 
 
 # calculating the angle anchor-centroic-point with cosine law

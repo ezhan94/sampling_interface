@@ -2,7 +2,7 @@ import math
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
-from model_utils import *
+from python.model_utils import *
 
 
 def cudafy_list(states):

@@ -3,7 +3,7 @@ from flask import Flask, request, g, render_template, jsonify, url_for, Response
 from python.sample_API import sample_from_model
 import numpy as np
 import json
-from python.bball_data.cfg import  SCALE
+from python.bball_data.cfg import SCALE
 from sklearn.metrics.pairwise import pairwise_distances
 from scipy.optimize import linear_sum_assignment
 

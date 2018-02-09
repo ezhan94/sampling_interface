@@ -55,11 +55,8 @@ function clicked() {
     m1 = d3.mouse(this);
     if (click_indicator != -1){
         if (interface_state == 1){
-            var x = (m1[0]-offsetX)/scale;
-            var y = (m1[1]-offsetY)/scale
-            if (x<0 || x>=50 || y<0 || y>=50) return;
-            startLoc.push(x)
-            startLoc.push(y)
+            startLoc.push((m1[0]-offsetX)/scale)
+            startLoc.push((m1[1]-offsetY)/scale)
             var line = svg.append('circle')
             .attr("cx", m1[0])
             .attr("cy", m1[1])
@@ -324,7 +321,7 @@ $(function() {
         click_indicator = 0;
         interface_state = 1
         startLoc=[]
-        $('#caption').text('Click the start locations for 5 players on the left side.')
+        $('#caption').text('Click the start locations for 5 players.')
         $('#clickMacro').attr('disabled','disabled');
     })
 })
