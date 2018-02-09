@@ -89,7 +89,12 @@ class MACRO_RNN_SMALL_VRNN_NOTSHARED(nn.Module):
 			# sampling the macro-goals
 			for i in range(n_agents):
 				dec_macro_t = self.dec_macro[i](torch.cat([y_t, h_macro[-1]], 1))
-				m_t[i] = sample_multinomial(torch.exp(dec_macro_t))
+
+				curr_goal = int(macro_goals[t,0,i].data[0])
+				if curr_goal == -1:
+					m_t[i] = sample_multinomial(torch.exp(dec_macro_t))
+				else:
+					m_t[i,0,curr_goal] = 1
 
 			macro_goals[t] = torch.max(m_t, 2)[1].transpose(0,1)
 			m_t_concat = m_t.transpose(0,1).contiguous().view(y.size(1), -1)
