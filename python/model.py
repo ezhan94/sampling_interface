@@ -11,11 +11,10 @@ def cudafy_list(states):
 	return states
 
 
-# 111
-class MACRO_SHARED_NOENC(nn.Module):
+class MACRO_RNN_SMALL_VRNN_NOTSHARED(nn.Module):
 
 	def __init__(self, params):
-		super(MACRO_SHARED_NOENC, self).__init__()
+		super(MACRO_RNN_SMALL_VRNN_NOTSHARED, self).__init__()
 
 		self.input_type = 'xym'
 		self.params = params
@@ -29,34 +28,14 @@ class MACRO_SHARED_NOENC(nn.Module):
 		n_layers = params['n_layers']
 		n_agents = params['n_agents']
 
-		self.enc_macro = nn.ModuleList([nn.Sequential(
-			nn.Linear(m_dim+rnn_macro_dim, h_dim),
-			nn.ReLU(),
-			nn.Linear(h_dim, h_dim),
-			nn.ReLU()) for i in range(n_agents)])
-		self.enc_macro_mean = nn.ModuleList([nn.Linear(h_dim, z_dim) for i in range(n_agents)])
-		self.enc_macro_std = nn.ModuleList([nn.Sequential(
-			nn.Linear(h_dim, z_dim),
-			nn.Softplus()) for i in range(n_agents)])
-
-		self.prior_macro = nn.ModuleList([nn.Sequential(
-			nn.Linear(rnn_macro_dim, h_dim),
-			nn.ReLU(),
-			nn.Linear(h_dim, h_dim),
-			nn.ReLU()) for i in range(n_agents)])
-		self.prior_macro_mean = nn.ModuleList([nn.Linear(h_dim, z_dim) for i in range(n_agents)])
-		self.prior_macro_std = nn.ModuleList([nn.Sequential(
-			nn.Linear(h_dim, z_dim),
-			nn.Softplus()) for i in range(n_agents)])
-
 		self.dec_macro = nn.ModuleList([nn.Sequential(
-			nn.Linear(y_dim+z_dim+rnn_macro_dim, h_dim),
+			nn.Linear(y_dim+rnn_macro_dim, h_dim),
 			nn.ReLU(),
 			nn.Linear(h_dim, m_dim),
 			nn.LogSoftmax()) for i in range(n_agents)])
 
 		self.enc = nn.ModuleList([nn.Sequential(
-			nn.Linear(x_dim+rnn_micro_dim, h_dim),
+			nn.Linear(x_dim+m_dim+rnn_micro_dim, h_dim),
 			nn.ReLU(),
 			nn.Linear(h_dim, h_dim),
 			nn.ReLU()) for i in range(n_agents)])
@@ -66,7 +45,7 @@ class MACRO_SHARED_NOENC(nn.Module):
 			nn.Softplus()) for i in range(n_agents)])
 
 		self.prior = nn.ModuleList([nn.Sequential(
-			nn.Linear(rnn_micro_dim, h_dim),
+			nn.Linear(m_dim+rnn_micro_dim, h_dim),
 			nn.ReLU(),
 			nn.Linear(h_dim, h_dim),
 			nn.ReLU()) for i in range(n_agents)])
@@ -76,7 +55,7 @@ class MACRO_SHARED_NOENC(nn.Module):
 			nn.Softplus()) for i in range(n_agents)])
 
 		self.dec = nn.ModuleList([nn.Sequential(
-			nn.Linear(y_dim+m_dim*n_agents+z_dim+rnn_micro_dim, h_dim),
+			nn.Linear(y_dim+m_dim+z_dim+rnn_micro_dim, h_dim),
 			nn.ReLU(),
 			nn.Linear(h_dim, h_dim),
 			nn.ReLU()) for i in range(n_agents)])
@@ -86,7 +65,7 @@ class MACRO_SHARED_NOENC(nn.Module):
 			nn.Softplus()) for i in range(n_agents)])
 
 		self.gru_micro = nn.ModuleList([nn.GRU(x_dim+z_dim, rnn_micro_dim, n_layers) for i in range(n_agents)])
-		self.gru_macro = nn.GRU(m_dim*n_agents+z_dim*n_agents, rnn_macro_dim, n_layers)
+		self.gru_macro = nn.GRU(m_dim*n_agents, rnn_macro_dim, n_layers)
 
 
 	def sample_single(self, y, macro_goals):
@@ -106,42 +85,25 @@ class MACRO_SHARED_NOENC(nn.Module):
 		for t in range(y.size(0)-1):
 			y_t = ret[t].clone()
 			m_t = m[t].clone()
-		
-			z_macro_t_list = []
 
 			# sampling the macro-goals
 			for i in range(n_agents):
-				prior_macro_t = self.prior_macro[i](torch.cat([h_macro[-1]], 1))
-				prior_macro_mean_t = self.prior_macro_mean[i](prior_macro_t)
-				prior_macro_std_t = self.prior_macro_std[i](prior_macro_t)
-
-				z_macro_t = sample_gauss(prior_macro_mean_t, prior_macro_std_t)
-				z_macro_t_list.append(z_macro_t)
-
-				dec_macro_t = self.dec_macro[i](torch.cat([y_t, z_macro_t, h_macro[-1]], 1))
-
-				curr_goal = int(macro_goals[t,0,i].data[0])
-				if curr_goal == -1:
-					m_t[i] = sample_multinomial(torch.exp(dec_macro_t))
-				else:
-					m_t[i,0,curr_goal] = 1
+				dec_macro_t = self.dec_macro[i](torch.cat([y_t, h_macro[-1]], 1))
+				m_t[i] = sample_multinomial(torch.exp(dec_macro_t))
 
 			macro_goals[t] = torch.max(m_t, 2)[1].transpose(0,1)
 			m_t_concat = m_t.transpose(0,1).contiguous().view(y.size(1), -1)
-
-			z_macro_t_concat = torch.cat(z_macro_t_list, -1)
-
-			_, h_macro = self.gru_macro(torch.cat([m_t_concat, z_macro_t_concat], 1).unsqueeze(0), h_macro)
+			_, h_macro = self.gru_macro(torch.cat([m_t_concat], 1).unsqueeze(0), h_macro)
 
 			# sampling next postiion
 			for i in range(n_agents):
-				prior_t = self.prior[i](torch.cat([h_micro[i][-1]], 1))
+				prior_t = self.prior[i](torch.cat([m_t[i], h_micro[i][-1]], 1))
 				prior_mean_t = self.prior_mean[i](prior_t)
 				prior_std_t = self.prior_std[i](prior_t)
 
 				z_t = sample_gauss(prior_mean_t, prior_std_t)
 
-				dec_t = self.dec[i](torch.cat([y_t, m_t_concat, z_t, h_micro[i][-1]], 1))
+				dec_t = self.dec[i](torch.cat([y_t, m_t[i], z_t, h_micro[i][-1]], 1))
 				dec_mean_t = self.dec_mean[i](dec_t)
 				dec_std_t = self.dec_std[i](dec_t)
 

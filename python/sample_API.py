@@ -46,7 +46,7 @@ def _order_players(players):
 
 
 def sample_from_model(starting_positions, macro_goals, scalenshift=True):
-	trial = 111 # fix this model, for now...
+	trial = 131 # fix this model, for now...
 	save_path = './python/saved/%03d/' % trial
 	# save_path = './saved/%03d/' % trial
 	params = pickle.load(open(save_path+'params.p', 'rb'))
