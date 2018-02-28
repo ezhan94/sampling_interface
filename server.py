@@ -1,6 +1,6 @@
 import time
 from flask import Flask, request, g, render_template, jsonify, url_for, Response, url_for, flash, session, redirect
-from python.sample_API import sample_from_model
+from python.sample_API import sample_from_model, sample_preset
 import numpy as np
 import json
 from python.bball_data.cfg import SCALE
@@ -33,11 +33,15 @@ def sample():
     startLoc = np.asarray(json.loads(request.args.get("startLoc")),dtype=float)*SCALE
     macroGoal = json.loads(request.args.get("macroGoal"))
 
-    input_macro = np.ones((50,1,5))*-1
+    seq_len = 30 # no more than 50
+
+    input_macro = np.ones((seq_len,1,5))*-1
     if len(macroGoal) == 5:
-        for i in range(50):
+        for i in range(seq_len):
             input_macro[-i,0] = macroGoal
     sample, macro_sample = sample_from_model(startLoc, input_macro)
+
+    #sample, macro_sample = sample_preset(idx=1)
 
     #associate output and start point
     loc1 = startLoc.reshape(-1,2)

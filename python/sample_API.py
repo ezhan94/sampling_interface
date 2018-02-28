@@ -26,7 +26,7 @@ def _calc_angle(centroid, anchor, point):
 # orders the players
 # player 5 is closest to the centroid
 # players 1-4 are ordered in a clockwise fashion wrt centroid
-def _order_players(players):
+def _order_players(players, macros):
 	players = np.reshape(players, (5,2))
 
 	centroid = np.mean(players, axis=0)
@@ -41,24 +41,31 @@ def _order_players(players):
 	order = np.argsort(angles)
 	final_order = np.array([players[k] for k in order])
 
-	return np.reshape(final_order, 10)
+	final_macros = np.zeros(macros.shape)
+	for i in range(5):
+		final_macros[:,:,i] = macros[:,:,order[i]]
+
+	return np.reshape(final_order, 10), final_macros
 
 
-
-def sample_from_model(starting_positions, macro_goals, scalenshift=True):
-	trial = 131 # fix this model, for now...
-	save_path = './python/saved/%03d/' % trial
-	# save_path = './saved/%03d/' % trial
-	params = pickle.load(open(save_path+'params.p', 'rb'))
+def _load_model(trial):
+	load_path = './python/saved/%03d/' % trial
+	params = pickle.load(open(load_path+'params.p', 'rb'))
 
 	# loading the model onto CPU
-	state_dict = torch.load(save_path+'model/'+params['model']+'_state_dict_best.pth', map_location=lambda storage, loc: storage)
+	state_dict = torch.load(load_path+'model/'+params['model']+'_state_dict_best.pth', map_location=lambda storage, loc: storage)
 	model = eval(params['model'])(params)
 	model.load_state_dict(state_dict)
 
+	return model
+
+
+def sample_from_model(starting_positions, macro_goals, scalenshift=True):
+	model = _load_model(131)
+
 	if scalenshift:
 		starting_positions = normalize(np.array(starting_positions)/cfg.SCALE)
-	starting_positions = _order_players(starting_positions)
+	starting_positions, macro_goals = _order_players(starting_positions, macro_goals)
 
 	# putting starting_positions into correct input for model method
 	y = np.zeros((len(macro_goals), len(macro_goals[0]), 10))
@@ -66,6 +73,27 @@ def sample_from_model(starting_positions, macro_goals, scalenshift=True):
 
 	# sampling from model
 	samples, macro_samples = model.sample_single(y, macro_goals)
+
+	samples = samples.data.cpu().numpy()
+	samples = np.swapaxes(samples, 0, 1)
+	samples = unnormalize(samples)
+
+	macro_samples = macro_samples.data.cpu().numpy()
+	macro_samples = np.swapaxes(macro_samples, 0, 1)
+
+	return samples[0], macro_samples[0]
+
+
+def sample_preset(idx, seq_len=50, burn_in=10):
+	model = _load_model(131)
+
+	preset_path = './python/saved/preset/'
+	sequences = pickle.load(open(preset_path+'sequences.p', 'rb'))
+	macro_goals = pickle.load(open(preset_path+'macro_goals.p', 'rb'))
+	macro_goals = macro_goals.astype(float) # temporary solution
+
+	# sampling from model
+	samples, macro_samples = model.sample_single(sequences[:,idx,:][:,None,:], macro_goals[:,idx,:][:,None,:], burn_in=burn_in)
 
 	samples = samples.data.cpu().numpy()
 	samples = np.swapaxes(samples, 0, 1)

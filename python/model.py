@@ -11,10 +11,10 @@ def cudafy_list(states):
 	return states
 
 
-class MACRO_RNN_SMALL_VRNN_NOTSHARED(nn.Module):
+class MACRO_VRNN(nn.Module):
 
 	def __init__(self, params):
-		super(MACRO_RNN_SMALL_VRNN_NOTSHARED, self).__init__()
+		super(MACRO_VRNN, self).__init__()
 
 		self.input_type = 'xym'
 		self.params = params
@@ -68,7 +68,7 @@ class MACRO_RNN_SMALL_VRNN_NOTSHARED(nn.Module):
 		self.gru_macro = nn.GRU(m_dim*n_agents, rnn_macro_dim, n_layers)
 
 
-	def sample_single(self, y, macro_goals):
+	def sample_single(self, y, macro_goals, burn_in=0):
 		n_agents = self.params['n_agents']
 
 		# converting numpy arrays to Variables
@@ -91,11 +91,11 @@ class MACRO_RNN_SMALL_VRNN_NOTSHARED(nn.Module):
 				dec_macro_t = self.dec_macro[i](torch.cat([y_t, h_macro[-1]], 1))
 
 				curr_goal = int(macro_goals[t,0,i].data[0])
-				if curr_goal == -1:
-					m_t[i] = sample_multinomial(torch.exp(dec_macro_t))
-				else:
+				if curr_goal != -1 or t < burn_in:
 					m_t[i,0,curr_goal] = 1
-
+				else:
+					m_t[i] = sample_multinomial(torch.exp(dec_macro_t))
+				
 			macro_goals[t] = torch.max(m_t, 2)[1].transpose(0,1)
 			m_t_concat = m_t.transpose(0,1).contiguous().view(y.size(1), -1)
 			_, h_macro = self.gru_macro(torch.cat([m_t_concat], 1).unsqueeze(0), h_macro)
@@ -112,7 +112,8 @@ class MACRO_RNN_SMALL_VRNN_NOTSHARED(nn.Module):
 				dec_mean_t = self.dec_mean[i](dec_t)
 				dec_std_t = self.dec_std[i](dec_t)
 
-				ret[t+1,:,2*i:2*i+2] = sample_gauss(dec_mean_t, dec_std_t)
+				ret[t+1,:,2*i:2*i+2] = y[t+1,:,2*i:2*i+2] if t < burn_in else sample_gauss(dec_mean_t, dec_std_t)
+				#ret[t+1,:,2*i:2*i+2] = sample_gauss(dec_mean_t, dec_std_t)
 				_, h_micro[i] = self.gru_micro[i](torch.cat([ret[t+1,:,2*i:2*i+2], z_t], 1).unsqueeze(0), h_micro[i])
 
 		macro_goals.data[-1] = macro_goals.data[-2] # a bit hack-y for last macro-goal
