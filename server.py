@@ -41,7 +41,7 @@ def sample():
             input_macro[-i,0] = macroGoal
     sample, macro_sample = sample_from_model(startLoc, input_macro)
 
-    #sample, macro_sample = sample_preset(idx=1)
+    #sample, macro_sample = sample_preset(idx=0)
 
     #associate output and start point
     loc1 = startLoc.reshape(-1,2)

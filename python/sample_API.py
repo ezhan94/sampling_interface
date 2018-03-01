@@ -92,10 +92,8 @@ def sample_preset(idx, seq_len=50, burn_in=10):
 	macro_goals = pickle.load(open(preset_path+'macro_goals.p', 'rb'))
 	macro_goals = macro_goals.astype(float) # temporary solution
 
-	import pdb; pdb.set_trace()
-
 	# sampling from model
-	samples, macro_samples = model.sample_single(sequences[:,idx,:][:,None,:], macro_goals[:,idx,:][:,None,:], burn_in=burn_in)
+	samples, macro_samples = model.sample_single(normalize(sequences[:,idx,:][:,None,:]), macro_goals[:,idx,:][:,None,:], burn_in=burn_in)
 
 	samples = samples.data.cpu().numpy()
 	samples = np.swapaxes(samples, 0, 1)
