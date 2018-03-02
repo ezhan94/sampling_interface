@@ -4,7 +4,8 @@ import python.bball_data.cfg as cfg
 
 
 from python.model import *
-from python.bball_data.utils import normalize, unnormalize, plot_animation, plot_macrogoals
+from python.bball_data.utils import normalize, unnormalize
+	# plot_animation, plot_macrogoals
 
 
 # calculating the angle anchor-centroic-point with cosine law

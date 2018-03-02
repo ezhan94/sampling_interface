@@ -28,26 +28,89 @@
         });
       });
     });
+
 </style>
 </head>
 <body>
 <div class = "container-fluid" style="margin-top:150px;">
+    <div class = "row col-md-12 text-center">
+        <H1>Simulation with Preset Initialization</H1>
+    </div>
+    <div class = "row col-md-12">
+        <div class = "col-md-2"></div>
+        <div class = "col-md-6" style="margin-top:30px;">
+            <div class="row text-center" >
+                <div class="row col-md-12" id="caption0" style="font-size:30px; margin-left:-40px">
+                <br>
+                </div>
+                <div class="row col-md-12" style="margin-left:-10px;">
+                    <div id="chart1"></div>
+                </div>
+            </div>
 
-   <div class = "col-md-8" style="margin-top:30px;">
+        </div>
+        <div class = "col-md-3 text-center" style="margin-top:200px;">
+            <label class = "text-center" for="preset_select" style="font-size:20px">Select a preset initialization:</label>
+            <select class="form-control text-center" id="preset_select" style="font-size:20px;width:400px">
+                <option value="-1" selected disabled>Please select</option>
+                 {% for id in range(preset_n) %}
+                    <option class="text-left" value="{{id}}" style="font-size:15px">{{id+1}}</option>
+                 {% endfor %}
+            </select>
+            <!--<select class="selectpicker text-center" id = "preset_select" title = "Select a Preset..."  data-width = "200px"  data-size="10" style="font-size:30px">-->
+                <!--{% set count = 0 %}-->
+            <!--{% for id in range(preset_n) %}-->
+            <!--<option class="text-left" value="{{id}}" style="font-size:15px">{{id+1}}</option>-->
+            <!--{% set count = count + 1%}-->
+            <!--{% endfor %}-->
+            <!--</select>-->
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+    <div class = "row col-md-12">
+        <div class ='col-md-2'></div>
+        <div class = "col-md-7 text-center" style="margin-top:30px;">
+            <!--<div class = "col-md-4">-->
+            <!--</div>-->
+            <div class = "col-md-3">
+                <button type="button" class="btn btn-success" id="simButton0" data-loading-text="Simulating..." style="width: 170px; height: 70px; font-size:25px;font-weight:bold;">Simulate</button>
+            </div>
+            <div class = "col-md-3 text-right" style="font-size:20px;">
+                Macro<br>Goals
+            </div>
+            <div class = "col-md-3 text-left" style="margin-left:-10px">
+                <input type="checkbox" data-toggle="toggle" id="macroToggle0" checked='checked' data-onstyle="success" data-width="100" data-height="70">
+            </div>
+            <div class = "col-md-3">
+                <button type="button" class="btn btn-success" id="replayButton0" disabled="disabled" style="width: 170px; height: 70px; font-size:25px;font-weight:bold;">Replay</button>
+            </div>
+        </div>
+    </div>
 
-        <div class="row text-right" >
+    <div class = "row col-md-12">
+        <br>
+        <br>
+        <hr style="height:10px;border-width:0;background-color:gray">
+    </div>
+
+    <div class = "row col-md-12 text-center">
+        <H1>Free Form Simulation</H1>
+    </div>
+    <div class = "col-md-2"></div>
+    <div class = "col-md-6" style="margin-top:30px;">
+        <div class="row text-center" >
             <div class="row col-md-12" id="caption" style="font-size:30px; margin-left:-40px">
             <br>
             </div>
             <div class="row col-md-12" style="margin-left:-10px;">
-                <div id="chart"></div>
+                <div id="chart2"></div>
             </div>
         </div>
 
     </div>
-    <div class = "col-md-4 text-left" style="margin-top:30px;">
-        <div class="col-md-12 text-left" style = 'margin-top: 2cm; margin-bottom: 3cm'>
-            <button type="button" class="btn btn-primary" id="clickStart" style="width:200px; height:100px; font-size:25px;font-weight:bold;">Start<br>Locations</button>
+    <div class = "col-md-2 text-center" style="margin-top:30px;">
+        <div class="col-md-12 text-center" style = 'margin-top: 2cm; margin-bottom: 3cm'>
+            <button type="button" class="btn btn-primary" id="clickStart" style="width:180px; height:100px; font-size:25px;font-weight:bold;">Start<br>Locations</button>
             <!--<label>-->
                 <!--<h2> Turn on to Click Start Locations</h2>-->
                 <!--<input type="checkbox" data-toggle="toggle" id="clickStart" >-->
@@ -55,32 +118,34 @@
         </div>
         <div class="row"><br></div>
 
-        <div class="col-md-12 text-left" style = 'margin-top: 3cm;'>
+        <div class="col-md-12 text-center" style = 'margin-top: 3cm;'>
             <!--<label>-->
                 <!--<h2>Turn On to Click Marco Goals</h2>-->
                <!--<input type="checkbox" data-toggle="toggle" id="clickMarco" >-->
             <!--</label>-->
-            <button type="button" class="btn btn-primary" id="clickMacro" style="width:200px; height:100px; font-size:25px;font-weight:bold;">Macro<br>Goals</button>
+            <button type="button" class="btn btn-primary" id="clickMacro" style="width:180px; height:100px; font-size:25px;font-weight:bold;">Macro<br>Goals</button>
         </div>
     </div>
+    <div class="col-md-2"></div>
 
-    <div class = "col-md-8 text-right" style="margin-top:30px;">
-        <div class = "col-md-4">
+    <div class = "row col-md-12">
+        <div class ='col-md-2'></div>
+        <div class = "col-md-7 text-center" style="margin-top:30px;">
+            <!--<div class = "col-md-4">-->
+            <!--</div>-->
+            <div class = "col-md-3">
+                <button type="button" class="btn btn-success" id="simButton" data-loading-text="Simulating..." style="width: 170px; height: 70px; font-size:25px;font-weight:bold;">Simulate</button>
+            </div>
+            <div class = "col-md-3 text-right" style="font-size:20px;">
+                Macro<br>Goals
+            </div>
+            <div class = "col-md-3 text-left" style="margin-left:-10px">
+                <input type="checkbox" data-toggle="toggle" id="macroToggle" checked='checked' data-onstyle="success" data-width="100" data-height="70">
+            </div>
+            <div class = "col-md-3">
+                <button type="button" class="btn btn-success" id="replayButton" disabled="disabled" style="width: 170px; height: 70px; font-size:25px;font-weight:bold;">Replay</button>
+            </div>
         </div>
-        <div class = "col-md-2 text-right">
-             <button type="button" class="btn btn-success" id="simButton" data-loading-text="Simulating..." style="width: 200px; height: 70px; font-size:25px;font-weight:bold;">Simulate</button>
-        </div>
-        <div class = "col-md-2 text-right" style="font-size:25px;">
-            Macro<br>Goals
-        </div>
-        <div class = "col-md-2 text-left" style="margin-left:-10px">
-            <input type="checkbox" data-toggle="toggle" id="macroToggle" data-onstyle="success" data-width="100" data-height="70">
-
-        </div>
-        <div class = "col-md-2 text-left">
-             <button type="button" class="btn btn-success" id="replayButton" disabled="disabled" style="width: 200px; height: 70px; font-size:25px;font-weight:bold;">Replay</button>
-        </div>
-
     </div>
 </div>
 
