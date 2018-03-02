@@ -39,9 +39,10 @@ def sample():
     if preset_idx != -1:
         sample, macro_sample = sample_preset(preset_idx)
     else:
-        input_macro = np.ones((50,1,5))*-1
+        seq_len = 30
+        input_macro = np.ones((seq_len,1,5))*-1
         if len(macroGoal) == 5:
-            for i in range(50):
+            for i in range(seq_len):
                 input_macro[-i,0] = macroGoal
         sample, macro_sample = sample_from_model(startLoc, input_macro)
 
