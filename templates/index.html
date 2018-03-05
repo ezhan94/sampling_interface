@@ -52,11 +52,14 @@
         <div class = "col-md-4 text-center" style="margin-top:60px;margin-left:-20px">
             <div class = "row col-md-12 text-left">
                 <p style = "font-size: 18px;">
-                    text text text text text text text text text text text text
-                    text text text text text text text text text text text text
-                    text text text text text text text text text text text text
-                    text text text text text text text text text text text text
-                    text text text text text text text text text text text text
+                    This simulation demonstrates that our model with macro-goals has learned long-term team formations for basketball offense and stochastic policies that imitate expert behavior.
+                </p>
+                <p style = "font-size: 18px;">
+                    We provide 10 preset initializations from the test set because our model performs better with a burn-in period.
+                    The 5 visible players are the only inputs to the model (ball and defense excluded).
+                </p>
+                <p style = "font-size: 18px;">
+                    See below for a free-form simulation.
                 </p>
             </div>
             <div class = "row col-md-12 text-left" style="margin-top:30px;">
@@ -106,7 +109,7 @@
     </div>
 
     <div class = "row col-md-12 text-center">
-        <H1>Free Form Simulation</H1>
+        <H1>Free-Form Simulation</H1>
     </div>
     <div class = "col-md-2"></div>
     <div class = "col-md-6" style="margin-top:30px;">
@@ -122,13 +125,13 @@
     </div>
     <div class = "col-md-4 text-center" style="margin-top:60px; margin-left:-20px">
         <div class="row col-md-12 text-left">
-             <p style="font-size:18px">
-                 text text text text text text text text text text text text
-                 text text text text text text text text text text text text
-                 text text text text text text text text text text text text
-                 text text text text text text text text text text text text
-                 text text text text text text text text text text text text
-             </p>
+            <p style="font-size: 18px">
+                In this free-form simulation, you can set the starting location for each player and their respective macro-goals.
+            </p>
+            <p style="font-size: 18px">
+                Note that the model might make errors because a combination of starting locations and macro-goals can be vastly different from what was encountered during training.
+                We also do not burn-in with ground-truth states.
+            </p>
         </div>
         <div class="row col-md-12 text-left" style="margin-top:30px">
             <div class = "col-md-6 text-center">
