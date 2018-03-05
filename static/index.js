@@ -6,7 +6,7 @@ var scale=12*(w/(94*12+39*2))
 var offsetX=39*(w/(94*12+39*2))
 var offsetY=31*(w/(94*12+39*2))
 
-var burn_in=10
+var burn_in=15
 var click_indicator = -1
 var timestep=0
 var timestep0=burn_in-1

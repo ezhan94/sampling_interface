@@ -65,8 +65,8 @@ def feed_preset():
     preset_sequence = pickle.load(open(preset_path + 'sequences.p', 'rb'))
     preset_idx = int(request.args.get("preset_ID"))
     target_seq = np.zeros((preset_sequence.shape[0],preset_sequence.shape[2]))
-    seq_part = preset_sequence[:10,preset_idx,:].copy()
-    target_seq[:10]=seq_part
+    seq_part = preset_sequence[:15,preset_idx,:].copy()
+    target_seq[:15]=seq_part
 
     return jsonify({'preset':target_seq.tolist()})
 

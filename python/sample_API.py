@@ -85,7 +85,7 @@ def sample_from_model(starting_positions, macro_goals, scalenshift=True):
 	return samples[0], macro_samples[0]
 
 
-def sample_preset(idx, seq_len=50, burn_in=10):
+def sample_preset(idx, seq_len=50, burn_in=15):
 	model = _load_model(131)
 
 	preset_path = './python/saved/preset/'
