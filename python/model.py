@@ -32,7 +32,7 @@ class MACRO_VRNN(nn.Module):
 			nn.Linear(y_dim+rnn_macro_dim, h_dim),
 			nn.ReLU(),
 			nn.Linear(h_dim, m_dim),
-			nn.LogSoftmax()) for i in range(n_agents)])
+			nn.LogSoftmax(dim=1)) for i in range(n_agents)])
 
 		self.enc = nn.ModuleList([nn.Sequential(
 			nn.Linear(x_dim+m_dim+rnn_micro_dim, h_dim),
@@ -90,7 +90,7 @@ class MACRO_VRNN(nn.Module):
 			for i in range(n_agents):
 				dec_macro_t = self.dec_macro[i](torch.cat([y_t, h_macro[-1]], 1))
 
-				curr_goal = int(macro_goals[t,0,i].data[0])
+				curr_goal = int(macro_goals[t,0,i].item())
 
 				if curr_goal == -1:
 					m_t[i] = sample_multinomial(torch.exp(dec_macro_t))
