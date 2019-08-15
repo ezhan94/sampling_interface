@@ -1,5 +1,5 @@
 # sampling_interface
-frontend interface for trajectory and macro sampling
+frontend interface for trajectory and macro-intent sampling
 
 ### 1. Setup
 
